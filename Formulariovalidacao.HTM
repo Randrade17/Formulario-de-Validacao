@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #17171a;
+      --surface2: #1f1f24;
+      --border: rgba(255,255,255,0.08);
+      --border-active: rgba(255,255,255,0.22);
+      --text: #f0ede8;
+      --muted: #7a7a84;
+      --accent: #c8f060;
+      --accent-dark: #8fb520;
+      --danger: #f05a5a;
+      --success: #60f0a0;
+      --font-display: 'DM Serif Display', serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -30%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(200,240,96,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%;
+      left: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(96,160,240,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .card-header .label {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-header h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .card-header p {
+      margin-top: 0.5rem;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    .field {
+      margin-bottom: 1.4rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+
+    .field:focus-within label {
+      color: var(--accent);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrap svg {
+      position: absolute;
+      left: 14px;
+      width: 16px;
+      height: 16px;
+      color: var(--muted);
+      pointer-events: none;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .field:focus-within .input-wrap svg { color: var(--accent); }
+
+    input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px 12px 40px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+
+    input::placeholder { color: #3e3e48; }
+
+    input:focus {
+      border-color: var(--border-active);
+      background: #222228;
+    }
+
+    input.error { border-color: var(--danger) !important; }
+    input.ok { border-color: rgba(96,240,160,0.35) !important; }
+
+    .toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .toggle-btn:hover { color: var(--text); }
+    .toggle-btn svg { width: 16px; height: 16px; }
+
+    .field-msg {
+      min-height: 18px;
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 400;
+      padding-left: 2px;
+      transition: opacity 0.2s;
+    }
+    .field-msg.err { color: var(--danger); }
+    .field-msg.ok-msg { color: var(--success); }
+
+    .strength-row {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    .strength-bar {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .strength-bar.active-1 { background: var(--danger); }
+    .strength-bar.active-2 { background: #f0a060; }
+    .strength-bar.active-3 { background: #c8f060; }
+    .strength-bar.active-4 { background: var(--success); }
+
+    .strength-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 8px;
+      margin-top: 8px;
+    }
+    .check-item {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.2s;
+    }
+    .check-item.met { color: var(--success); }
+    .check-item .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 14px;
+      background: var(--accent);
+      color: #0d0d0f;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, opacity 0.2s;
+      letter-spacing: 0.01em;
+    }
+
+    .submit-btn:hover { background: #d4f570; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    .success-banner {
+      display: none;
+      margin-top: 1.25rem;
+      background: rgba(96,240,160,0.08);
+      border: 1px solid rgba(96,240,160,0.25);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--success);
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 2rem 0 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <div class="label">Novo acesso</div>
+    <h1>Criar conta</h1>
+    <p>Preencha os campos abaixo com atenção.</p>
+  </div>
+
+  <div class="field" id="f-name">
+    <label for="name">Nome completo</label>
+    <div class="input-wrap">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0"/></svg>
+      <input id="name" type="text" placeholder="Seu nome e sobrenome" autocomplete="name" oninput="validate('name')" onblur="validateBlur('name')">
+    </div>
+    <div id="name-msg" class="field-msg"></div>
+  </div>
+
+  <div class="field" id="f-email">
+    <label for="email">E-mail</label>
+    <div class="input-wrap">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+      <input id="email" type="text" placeholder="voce@exemplo.com" autocomplete="email" oninput="validate('email')" onblur="validateBlur('email')">
+    </div>
+    <div id="email-msg" class="field-msg"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="field" id="f-password">
+    <label for="password">Senha</label>
+    <div class="input-wrap">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+      <input id="password" type="password" placeholder="Mín. 8 caracteres" autocomplete="new-password" oninput="validate('password')" onblur="validateBlur('password')">
+      <button class="toggle-btn" onclick="togglePwd('password','eye1')" type="button" aria-label="Mostrar senha">
+        <svg id="eye1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </button>
+    </div>
+    <div id="password-msg" class="field-msg"></div>
+    <div id="strength-wrap" style="display:none">
+      <div class="strength-row">
+        <div class="strength-bar" id="sb1"></div>
+        <div class="strength-bar" id="sb2"></div>
+        <div class="strength-bar" id="sb3"></div>
+        <div class="strength-bar" id="sb4"></div>
+      </div>
+      <div class="strength-label" id="strength-label"></div>
+      <div class="checklist">
+        <div class="check-item" id="ck-len"><span class="dot"></span>8+ caracteres</div>
+        <div class="check-item" id="ck-upper"><span class="dot"></span>Maiúscula</div>
+        <div class="check-item" id="ck-num"><span class="dot"></span>Número</div>
+        <div class="check-item" id="ck-special"><span class="dot"></span>Símbolo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field" id="f-confirm">
+    <label for="confirm">Confirmar senha</label>
+    <div class="input-wrap">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+      <input id="confirm" type="password" placeholder="Repita a senha" autocomplete="new-password" oninput="validate('confirm')" onblur="validateBlur('confirm')">
+      <button class="toggle-btn" onclick="togglePwd('confirm','eye2')" type="button" aria-label="Mostrar confirmação">
+        <svg id="eye2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </button>
+    </div>
+    <div id="confirm-msg" class="field-msg"></div>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="submitForm()">Criar minha conta</button>
+  <div class="success-banner" id="success-banner">
+    ✓ Conta criada com sucesso! Bem-vindo(a).
+  </div>
+</div>
+
+<script>
+  /* ── Regras de validação ── */
+  const RULES = {
+    name(v) {
+      if (!v.trim()) return 'Nome é obrigatório.';
+      if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(v)) return 'Apenas letras são permitidas.';
+      if (v.trim().split(/\s+/).length < 2) return 'Informe nome e sobrenome.';
+      if (v.trim().length < 4) return 'Nome muito curto.';
+      return '';
+    },
+    email(v) {
+      if (!v.trim()) return 'E-mail é obrigatório.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())) return 'E-mail inválido. Ex: voce@dominio.com';
+      return '';
+    },
+    password(v) {
+      if (!v) return 'Senha é obrigatória.';
+      if (v.length < 8) return 'Mínimo de 8 caracteres.';
+      if (!/[A-Z]/.test(v)) return 'Inclua ao menos uma letra maiúscula.';
+      if (!/[0-9]/.test(v)) return 'Inclua ao menos um número.';
+      return '';
+    },
+    confirm(v) {
+      const pwd = document.getElementById('password').value;
+      if (!v) return 'Confirme a senha.';
+      if (v !== pwd) return 'As senhas não coincidem.';
+      return '';
+    }
+  };
+
+  const touched = { name: false, email: false, password: false, confirm: false };
+
+  function validate(field) {
+    const input = document.getElementById(field);
+    const msg   = document.getElementById(field + '-msg');
+    const err   = RULES[field](input.value);
+
+    if (field === 'password') updateStrength(input.value);
+
+    if (touched[field]) {
+      msg.textContent = err;
+      msg.className = 'field-msg ' + (err ? 'err' : (input.value ? 'ok-msg' : ''));
+      input.className = err ? 'error' : (input.value ? 'ok' : '');
+    }
+    return !err;
+  }
+
+  function validateBlur(field) {
+    touched[field] = true;
+    validate(field);
+  }
+
+  /* ── Força da senha ── */
+  function updateStrength(pwd) {
+    const wrap = document.getElementById('strength-wrap');
+    if (!pwd) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+
+    const checks = {
+      len:     pwd.length >= 8,
+      upper:   /[A-Z]/.test(pwd),
+      num:     /[0-9]/.test(pwd),
+      special: /[^A-Za-z0-9]/.test(pwd)
+    };
+
+    document.getElementById('ck-len').className    = 'check-item' + (checks.len ? ' met' : '');
+    document.getElementById('ck-upper').className  = 'check-item' + (checks.upper ? ' met' : '');
+    document.getElementById('ck-num').className    = 'check-item' + (checks.num ? ' met' : '');
+    document.getElementById('ck-special').className = 'check-item' + (checks.special ? ' met' : '');
+
+    const score = Object.values(checks).filter(Boolean).length;
+    const labels = ['', 'Fraca', 'Razoável', 'Boa', 'Forte'];
+    document.getElementById('strength-label').textContent = 'Força: ' + labels[score];
+
+    for (let i = 1; i <= 4; i++) {
+      const bar = document.getElementById('sb' + i);
+      bar.className = 'strength-bar' + (i <= score ? ' active-' + score : '');
+    }
+  }
+
+  /* ── Mostrar/ocultar senha ── */
+  function togglePwd(inputId, iconId) {
+    const inp  = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    icon.innerHTML = show
+      ? '<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>'
+      : '<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>';
+  }
+
+  /* ── Envio do formulário ── */
+  function submitForm() {
+    const fields = ['name', 'email', 'password', 'confirm'];
+    fields.forEach(f => { touched[f] = true; });
+    const allValid = fields.every(f => validate(f));
+    const banner = document.getElementById('success-banner');
+
+    if (allValid) {
+      banner.style.display = 'block';
+      fields.forEach(f => {
+        document.getElementById(f).value = '';
+        document.getElementById(f).className = '';
+        document.getElementById(f + '-msg').textContent = '';
+        touched[f] = false;
+      });
+      document.getElementById('strength-wrap').style.display = 'none';
+      setTimeout(() => banner.style.display = 'none', 5000);
+    } else {
+      banner.style.display = 'none';
+      const firstErr = fields.find(f => !RULES[f](document.getElementById(f).value === '' ? '' : document.getElementById(f).value));
+      if (firstErr) document.getElementById(firstErr).focus();
+    }
+  }
+</script>
+</body>
+</html>
