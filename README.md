@@ -195,3 +195,15 @@ Formulariovalidacao.HTM
 ## 📄 Licença
 
 Este projeto é de uso livre para fins educacionais e de estudo.
+
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido por Rafael Figueiredo 💻
+
+📫 Contato LinkedIn: https://www.linkedin.com/in/rafael-figueiredo-de-andrade/ GitHub: https://github.com/Randrade17 ⭐ Apoie o Projeto
+
+Se você gostou do projeto:
+
+⭐ Deixe uma estrela no repositório 🍴 Faça um fork 🛠️ Contribua com melhorias
